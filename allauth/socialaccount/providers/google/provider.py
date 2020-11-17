@@ -25,6 +25,7 @@ class GoogleProvider(OAuth2Provider):
     id = "google"
     name = "Google"
     account_class = GoogleAccount
+    id_provider_mode = False
 
     def get_default_scope(self):
         scope = [Scope.PROFILE]
@@ -39,7 +40,12 @@ class GoogleProvider(OAuth2Provider):
         return ret
 
     def extract_uid(self, data):
-        return str(data["id"])
+        try:
+            value = str(data["sub"])
+            self.id_provider_mode = True
+        except KeyError:
+            value = str(data["id"])
+        return value
 
     def extract_common_fields(self, data):
         return dict(
